@@ -258,7 +258,7 @@
             <h1>Thank you for your feedback!</h1>
             <p class="subtitle">Your input helps us make Readdit Later better for everyone. We appreciate you taking the time to share your thoughts.</p>
             <div class="button-group">
-                <a href="https://chromewebstore.google.com/detail/jdceogapnjfcfdklbpnllbmnjbfmfejk?utm_source=item-share-cb" class="btn btn-primary">Visit Chrome Web Store</a>
+                <a href="https://chromewebstore.google.com/detail/jdceogapnjfcfdklbpnllbmnjbfmfejk?utm_source=item-share-cb" class="btn btn-primary">Reinstall Extension</a>
             </div>
         </div>
     </div>
@@ -354,10 +354,7 @@ This feedback was automatically generated from the Readdit Later extension unins
             document.getElementById('surveyForm').classList.add('hide');
             document.getElementById('thankYou').classList.add('show');
             
-            // Auto-redirect to Chrome Web Store after 3 seconds
-            setTimeout(() => {
-                window.location.href = 'https://chromewebstore.google.com/detail/jdceogapnjfcfdklbpnllbmnjbfmfejk?utm_source=item-share-cb';
-            }, 3000);
+            // No automatic redirection - user must click the button to reinstall
         }
 
         // Auto-focus on first radio option for accessibility
