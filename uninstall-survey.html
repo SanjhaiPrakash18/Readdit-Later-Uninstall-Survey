@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Readdit Later - Uninstall Survey</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Rethink Sans', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2c3e50;
+            line-height: 1.6;
+        }
+
+        .survey-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #FF4500, #FF6B35);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #2c3e50;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6c757d;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover {
+            border-color: #FF4500;
+            background: #fff8f5;
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            accent-color: #FF4500;
+        }
+
+        .radio-option.selected {
+            border-color: #FF4500;
+            background: #fff8f5;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-family: 'Rethink Sans', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #FF4500;
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Rethink Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: #FF4500;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #e63e00;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 69, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e9ecef;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .thank-you {
+            display: none;
+        }
+
+        .thank-you.show {
+            display: block;
+        }
+
+        .survey-form.hide {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .survey-container {
+                padding: 30px 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="survey-container">
+        <div class="logo">RL</div>
+        
+        <div class="survey-form" id="surveyForm">
+            <h1>We're sorry to see you go!</h1>
+            <p class="subtitle">Help us improve Readdit Later by sharing why you're uninstalling</p>
+
+            <form id="uninstallForm">
+                <div class="form-group">
+                    <label>What was the main reason for uninstalling?</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="not-useful" id="not-useful">
+                            <label for="not-useful">Extension wasn't useful for me</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="bugs" id="bugs">
+                            <label for="bugs">Too many bugs or technical issues</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="performance" id="performance">
+                            <label for="performance">Slowed down my browser</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="alternatives" id="alternatives">
+                            <label for="alternatives">Found a better alternative</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="features" id="features">
+                            <label for="features">Missing features I needed</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="privacy" id="privacy">
+                            <label for="privacy">Privacy concerns</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="reason" value="other" id="other">
+                            <label for="other">Other reason</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="feedback">Any additional feedback? (Optional)</label>
+                    <textarea id="feedback" name="feedback" placeholder="What could we have done better? What features were you looking for?"></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="skipSurvey()">Skip</button>
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="thank-you" id="thankYou">
+            <h1>Thank you for your feedback!</h1>
+            <p class="subtitle">Your input helps us make Readdit Later better for everyone. We appreciate you taking the time to share your thoughts.</p>
+            <div class="button-group">
+                <a href="https://sanjhaiprakash18.github.io/Readdit-Later/" class="btn btn-primary">Visit Our Homepage</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add interactivity to radio options
+        document.querySelectorAll('.radio-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                
+                // Remove selected class from all options
+                document.querySelectorAll('.radio-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('uninstallForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = {
+                reason: formData.get('reason'),
+                feedback: formData.get('feedback'),
+                timestamp: new Date().toISOString(),
+                version: new URLSearchParams(window.location.search).get('version') || 'unknown',
+                source: new URLSearchParams(window.location.search).get('source') || 'unknown'
+            };
+
+            try {
+                // Send feedback to your server
+                console.log('Survey data:', data);
+                
+                // Send to your Vercel server for analytics
+                try {
+                    await fetch('https://reddit-later-server-local.vercel.app/uninstall-survey', {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(data)
+                    });
+                } catch (serverError) {
+                    console.log('Server analytics failed, but continuing:', serverError);
+                }
+                
+                // Show thank you message regardless of server response
+                showThankYou();
+                
+            } catch (error) {
+                console.error('Error submitting survey:', error);
+                // Still show thank you even if analytics fails
+                showThankYou();
+            }
+        });
+
+        function skipSurvey() {
+            window.close();
+        }
+
+        function showThankYou() {
+            document.getElementById('surveyForm').classList.add('hide');
+            document.getElementById('thankYou').classList.add('show');
+            
+            // Auto-close after 3 seconds
+            setTimeout(() => {
+                window.close();
+            }, 3000);
+        }
+
+        // Auto-focus on first radio option for accessibility
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstRadio = document.querySelector('input[type="radio"]');
+            if (firstRadio) {
+                firstRadio.focus();
+            }
+        });
+    </script>
+</body>
+</html>
