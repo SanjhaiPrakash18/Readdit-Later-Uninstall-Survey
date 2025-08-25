@@ -295,8 +295,11 @@
             };
 
             try {
-                // Format the data for clean email presentation
-                const reasonText = data.reason ? data.reason.replace(/-/g, ' ').toUpperCase() : 'Not specified';
+                // Get the exact text of the selected option
+                const selectedOption = document.querySelector('input[name="reason"]:checked');
+                const reasonText = selectedOption ? 
+                    selectedOption.nextElementSibling.textContent : 
+                    'Not specified';
                 const feedbackText = data.feedback || 'No additional feedback provided';
                 
                 // Send via Web3Forms
