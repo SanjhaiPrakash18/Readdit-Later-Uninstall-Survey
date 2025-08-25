@@ -295,12 +295,17 @@
             };
 
             try {
-                // Create a mailto link with structured data
+                // Format the data for clean email presentation
                 const reasonText = data.reason ? data.reason.replace(/-/g, ' ').toUpperCase() : 'Not specified';
                 const feedbackText = data.feedback || 'No additional feedback provided';
                 
-                const emailSubject = encodeURIComponent('Readdit Later - Uninstall Survey Feedback');
-                const emailBody = encodeURIComponent(`
+                // Send via Web3Forms
+                const webFormData = new FormData();
+                webFormData.append('access_key', '6703c083-6c42-42d7-a23c-a26c54ba1412');
+                webFormData.append('subject', 'Readdit Later - Uninstall Survey Feedback');
+                webFormData.append('from_name', 'Readdit Later Extension');
+                webFormData.append('email', 'noreply@readditlater.extension');
+                webFormData.append('message', `
 READDIT LATER UNINSTALL SURVEY FEEDBACK
 =====================================
 
@@ -319,38 +324,15 @@ USER AGENT: ${data.userAgent}
 This feedback was automatically generated from the Readdit Later extension uninstall survey.
                 `.trim());
 
-                // Try to open default email client
-                const mailtoLink = `mailto:sanjhaiprakash18@gmail.com?subject=${emailSubject}&body=${emailBody}`;
-                
-                // Create a hidden link and click it
-                const link = document.createElement('a');
-                link.href = mailtoLink;
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                const response = await fetch('https://api.web3forms.com/submit', {
+                    method: 'POST',
+                    body: webFormData
+                });
 
-                // Also try to send via web form as backup
-                try {
-                    const webFormData = new FormData();
-                    webFormData.append('access_key', '6703c083-6c42-42d7-a23c-a26c54ba1412');
-                    webFormData.append('subject', 'Readdit Later - Uninstall Survey Feedback');
-                    webFormData.append('from_name', 'Readdit Later Extension');
-                    webFormData.append('message', `
-Timestamp: ${data.timestamp}
-Extension Version: ${data.version}
-Source: ${data.source}
-Uninstall Reason: ${reasonText}
-Additional Feedback: ${feedbackText}
-User Agent: ${data.userAgent}
-                    `.trim());
-
-                    await fetch('https://api.web3forms.com/submit', {
-                        method: 'POST',
-                        body: webFormData
-                    });
-                } catch (webFormError) {
-                    console.log('Web form submission failed:', webFormError);
+                if (response.ok) {
+                    console.log('Survey data submitted successfully');
+                } else {
+                    console.log('Submission failed, but continuing to thank you page');
                 }
                 
                 // Always show thank you message
