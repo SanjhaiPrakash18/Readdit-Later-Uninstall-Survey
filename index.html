@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Readdit Later - Uninstall Survey</title>
+    <link rel="icon" type="image/png" href="icons/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -39,14 +40,17 @@
             width: 80px;
             height: 80px;
             margin: 0 auto 20px;
-            background: linear-gradient(135deg, #FF4500, #FF6B35);
             border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 32px;
-            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         h1 {
@@ -195,7 +199,9 @@
 </head>
 <body>
     <div class="survey-container">
-        <div class="logo">RL</div>
+        <div class="logo">
+            <img src="icons/logo.png" alt="Readdit Later Logo">
+        </div>
         
         <div class="survey-form" id="surveyForm">
             <h1>We're sorry to see you go!</h1>
@@ -252,7 +258,7 @@
             <h1>Thank you for your feedback!</h1>
             <p class="subtitle">Your input helps us make Readdit Later better for everyone. We appreciate you taking the time to share your thoughts.</p>
             <div class="button-group">
-                <a href="https://sanjhaiprakash18.github.io/Readdit-Later/" class="btn btn-primary">Visit Our Homepage</a>
+                <a href="https://chromewebstore.google.com/detail/jdceogapnjfcfdklbpnllbmnjbfmfejk?utm_source=item-share-cb" class="btn btn-primary">Visit Chrome Web Store</a>
             </div>
         </div>
     </div>
@@ -284,48 +290,91 @@
                 feedback: formData.get('feedback'),
                 timestamp: new Date().toISOString(),
                 version: new URLSearchParams(window.location.search).get('version') || 'unknown',
-                source: new URLSearchParams(window.location.search).get('source') || 'unknown'
+                source: new URLSearchParams(window.location.search).get('source') || 'chrome-extension',
+                userAgent: navigator.userAgent
             };
 
             try {
-                // Send feedback to your server
-                console.log('Survey data:', data);
+                // Create a mailto link with structured data
+                const reasonText = data.reason ? data.reason.replace(/-/g, ' ').toUpperCase() : 'Not specified';
+                const feedbackText = data.feedback || 'No additional feedback provided';
                 
-                // Send to your Vercel server for analytics
+                const emailSubject = encodeURIComponent('Readdit Later - Uninstall Survey Feedback');
+                const emailBody = encodeURIComponent(`
+READDIT LATER UNINSTALL SURVEY FEEDBACK
+=====================================
+
+Timestamp: ${data.timestamp}
+Extension Version: ${data.version}
+Source: ${data.source}
+
+UNINSTALL REASON: ${reasonText}
+
+ADDITIONAL FEEDBACK:
+${feedbackText}
+
+USER AGENT: ${data.userAgent}
+
+=====================================
+This feedback was automatically generated from the Readdit Later extension uninstall survey.
+                `.trim());
+
+                // Try to open default email client
+                const mailtoLink = `mailto:sanjhaiprakash18@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+                
+                // Create a hidden link and click it
+                const link = document.createElement('a');
+                link.href = mailtoLink;
+                link.style.display = 'none';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // Also try to send via web form as backup
                 try {
-                    await fetch('https://reddit-later-server-local.vercel.app/uninstall-survey', {
+                    const webFormData = new FormData();
+                    webFormData.append('access_key', '6703c083-6c42-42d7-a23c-a26c54ba1412');
+                    webFormData.append('subject', 'Readdit Later - Uninstall Survey Feedback');
+                    webFormData.append('from_name', 'Readdit Later Extension');
+                    webFormData.append('message', `
+Timestamp: ${data.timestamp}
+Extension Version: ${data.version}
+Source: ${data.source}
+Uninstall Reason: ${reasonText}
+Additional Feedback: ${feedbackText}
+User Agent: ${data.userAgent}
+                    `.trim());
+
+                    await fetch('https://api.web3forms.com/submit', {
                         method: 'POST',
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(data)
+                        body: webFormData
                     });
-                } catch (serverError) {
-                    console.log('Server analytics failed, but continuing:', serverError);
+                } catch (webFormError) {
+                    console.log('Web form submission failed:', webFormError);
                 }
                 
-                // Show thank you message regardless of server response
+                // Always show thank you message
                 showThankYou();
                 
             } catch (error) {
                 console.error('Error submitting survey:', error);
-                // Still show thank you even if analytics fails
+                // Still show thank you even if submission fails
                 showThankYou();
             }
         });
 
         function skipSurvey() {
-            window.close();
+            // Redirect to Chrome Web Store when skipping
+            window.location.href = 'https://chromewebstore.google.com/detail/jdceogapnjfcfdklbpnllbmnjbfmfejk?utm_source=item-share-cb';
         }
 
         function showThankYou() {
             document.getElementById('surveyForm').classList.add('hide');
             document.getElementById('thankYou').classList.add('show');
             
-            // Auto-close after 3 seconds
+            // Auto-redirect to Chrome Web Store after 3 seconds
             setTimeout(() => {
-                window.close();
+                window.location.href = 'https://chromewebstore.google.com/detail/jdceogapnjfcfdklbpnllbmnjbfmfejk?utm_source=item-share-cb';
             }, 3000);
         }
 
