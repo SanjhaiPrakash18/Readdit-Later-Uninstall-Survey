@@ -109,6 +109,62 @@
             background: #fff8f5;
         }
 
+        .followup-question {
+            margin-top: 15px;
+            padding: 20px;
+            background: #f8f9fa;
+            border: 2px solid #FF4500;
+            border-radius: 12px;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .followup-question.show {
+            display: block;
+        }
+
+        .followup-question label {
+            color: #FF4500;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .followup-question textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-family: 'Rethink Sans', sans-serif;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        .followup-question textarea:focus {
+            outline: none;
+            border-color: #FF4500;
+            box-shadow: 0 0 0 3px rgba(255, 69, 0, 0.1);
+        }
+
+        .followup-question .required {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         textarea {
             width: 100%;
             padding: 15px;
@@ -182,6 +238,17 @@
             display: none;
         }
 
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
         @media (max-width: 600px) {
             .survey-container {
                 padding: 30px 20px;
@@ -209,7 +276,7 @@
 
             <form id="uninstallForm">
                 <div class="form-group">
-                    <label>What was the main reason for uninstalling?</label>
+                    <label>What was the main reason for uninstalling? *</label>
                     <div class="radio-group">
                         <div class="radio-option">
                             <input type="radio" name="reason" value="not-useful" id="not-useful">
@@ -240,11 +307,58 @@
                             <label for="other">Other reason</label>
                         </div>
                     </div>
+                    
+                    <!-- Follow-up questions for each option -->
+                    <div class="followup-question" id="followup-not-useful">
+                        <label>What would have made the extension more useful for you? *</label>
+                        <textarea name="followup-not-useful" placeholder="Please describe what you were looking for or expecting from the extension..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="followup-question" id="followup-bugs">
+                        <label>What specific bugs or issues did you encounter? *</label>
+                        <textarea name="followup-bugs" placeholder="Please describe the bugs or technical problems you experienced..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="followup-question" id="followup-performance">
+                        <label>How did the extension affect your browser's performance? *</label>
+                        <textarea name="followup-performance" placeholder="Please describe the performance issues you noticed (slow loading, crashes, etc.)..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="followup-question" id="followup-alternatives">
+                        <label>Which alternative did you choose and why? *</label>
+                        <textarea name="followup-alternatives" placeholder="Please tell us about the alternative extension/tool and what made it better..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="followup-question" id="followup-features">
+                        <label>What features were you looking for that were missing? *</label>
+                        <textarea name="followup-features" placeholder="Please describe the specific features you needed in short..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="followup-question" id="followup-privacy">
+                        <label>What privacy concerns did you have? *</label>
+                        <textarea name="followup-privacy" placeholder="Please share your specific privacy concerns about the extension..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="followup-question" id="followup-other">
+                        <label>Please tell us your reason for uninstalling: *</label>
+                        <textarea name="followup-other" placeholder="Please describe your specific reason for uninstalling..."></textarea>
+                        <div class="required">* This field is required</div>
+                    </div>
+                    
+                    <div class="error-message" id="error-message">
+                        Please fill in the required field above.
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="feedback">Any additional feedback? (Optional)</label>
-                    <textarea id="feedback" name="feedback" placeholder="What could we have done better? What features were you looking for?"></textarea>
+                    <textarea id="feedback" name="feedback" placeholder="What could we have done better? Any other thoughts?"></textarea>
                 </div>
 
                 <div class="button-group">
@@ -277,6 +391,30 @@
                 
                 // Add selected class to clicked option
                 this.classList.add('selected');
+                
+                // Hide all follow-up questions first
+                document.querySelectorAll('.followup-question').forEach(followup => {
+                    followup.classList.remove('show');
+                });
+                
+                // Hide error message
+                document.getElementById('error-message').classList.remove('show');
+                
+                // Show the relevant follow-up question
+                const reasonValue = radio.value;
+                const followupId = 'followup-' + reasonValue;
+                const followupElement = document.getElementById(followupId);
+                
+                if (followupElement) {
+                    followupElement.classList.add('show');
+                    // Focus on the textarea for better UX
+                    setTimeout(() => {
+                        const textarea = followupElement.querySelector('textarea');
+                        if (textarea) {
+                            textarea.focus();
+                        }
+                    }, 300);
+                }
             });
         });
 
@@ -284,9 +422,30 @@
         document.getElementById('uninstallForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            // Validate that a reason is selected
+            const selectedReason = document.querySelector('input[name="reason"]:checked');
+            if (!selectedReason) {
+                alert('Please select a reason for uninstalling.');
+                return;
+            }
+            
+            // Validate that the follow-up question is answered
+            const reasonValue = selectedReason.value;
+            const followupTextarea = document.querySelector(`textarea[name="followup-${reasonValue}"]`);
+            
+            if (followupTextarea && !followupTextarea.value.trim()) {
+                document.getElementById('error-message').classList.add('show');
+                followupTextarea.focus();
+                return;
+            }
+            
+            // Hide error message if validation passes
+            document.getElementById('error-message').classList.remove('show');
+            
             const formData = new FormData(this);
             const data = {
                 reason: formData.get('reason'),
+                followupAnswer: followupTextarea ? followupTextarea.value : '',
                 feedback: formData.get('feedback'),
                 timestamp: new Date().toISOString(),
                 version: new URLSearchParams(window.location.search).get('version') || 'unknown',
@@ -296,10 +455,8 @@
 
             try {
                 // Get the exact text of the selected option
-                const selectedOption = document.querySelector('input[name="reason"]:checked');
-                const reasonText = selectedOption ? 
-                    selectedOption.nextElementSibling.textContent : 
-                    'Not specified';
+                const reasonText = selectedReason.nextElementSibling.textContent;
+                const followupText = data.followupAnswer || 'No follow-up answer provided';
                 const feedbackText = data.feedback || 'No additional feedback provided';
                 
                 // Send via Web3Forms
@@ -317,6 +474,9 @@ Extension Version: ${data.version}
 Source: ${data.source}
 
 UNINSTALL REASON: ${reasonText}
+
+DETAILED REASON:
+${followupText}
 
 ADDITIONAL FEEDBACK:
 ${feedbackText}
